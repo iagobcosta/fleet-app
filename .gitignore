@@ -8,6 +8,8 @@ node_modules/
 dist/
 web-build/
 expo-env.d.ts
+android/
+ios/
 
 # Native
 *.orig.*
@@ -28,6 +30,7 @@ yarn-error.*
 # macOS
 .DS_Store
 *.pem
+.env
 
 # local env files
 .env*.local
