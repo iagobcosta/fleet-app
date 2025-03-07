@@ -107,20 +107,31 @@ export function Home() {
         type: "info",
         text1: "Todos dados foram sincronizados",
       })
+
+      return true
     }
 
     if (percentage < 100) {
       setPercentageToSync(`${percentage.toFixed(0)}% sincronizado`)
+      return false
     }
   }
 
   useFocusEffect(
     useCallback(() => {
-      db.getUploadQueueStats(true).then((stats) => {
-        handleProgress(stats)
-      })
-      fetchHistoric()
-    }, [db.currentStatus])
+      const interval = setInterval(() => {
+        db.getUploadQueueStats(true).then((stats) => {
+          const synced = handleProgress(stats)
+          synced.then((result) => {
+            if (result) {
+              clearInterval(interval)
+            }
+          })
+        })
+      }, 1000)
+
+      return () => clearInterval(interval)
+    }, [])
   )
 
   useFocusEffect(
