@@ -11,3 +11,13 @@ export const Content = styled.View`
   padding: 20px;
   margin-top: 16px;
 `
+
+export const Message = styled.Text`
+  color: ${({ theme }) => theme.COLORS.WHITE};
+  font-size: ${({ theme }) => theme.FONT_SIZE.SM}px;
+  font-family: ${({ theme }) => theme.FONT_FAMILY.REGULAR};
+
+  text-align: center;
+
+  margin: 24px;
+`

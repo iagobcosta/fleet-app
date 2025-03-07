@@ -1,6 +1,6 @@
 {
   "expo": {
-    "name": "fleet-app",
+    "name": "Fleet App",
     "slug": "fleet-app",
     "version": "1.0.0",
     "orientation": "portrait",
@@ -14,7 +14,17 @@
     },
     "ios": {
       "supportsTablet": false,
-      "bundleIdentifier": "br.com.darcaltech.fleetapp"
+      "bundleIdentifier": "br.com.darcaltech.fleetapp",
+      "infoPlist": {
+        "GIDClientID": "208696419462-7v9j0ii5vgsptvianskdlveskgjmu70j.apps.googleusercontent.com",
+        "CFBundleURLTypes": [
+          {
+            "CFBundleURLSchemes": [
+              "com.googleusercontent.apps.208696419462-7v9j0ii5vgsptvianskdlveskgjmu70j"
+            ]
+          }
+        ]
+      }
     },
     "android": {
       "adaptiveIcon": {
@@ -26,6 +36,14 @@
     "web": {
       "favicon": "./assets/favicon.png"
     },
-    "plugins": ["expo-font"]
+    "plugins": [
+      "expo-font",
+      [
+        "expo-location",
+        {
+          "locationAlwaysAndWhenInUsePermission": "Allow $(PRODUCT_NAME) to use your location."
+        }
+      ]
+    ]
   }
 }
