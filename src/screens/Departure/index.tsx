@@ -8,6 +8,7 @@ import {
   watchPositionAsync,
   LocationAccuracy,
   LocationSubscription,
+  LocationObjectCoords,
 } from "expo-location"
 
 import { useUser } from "@realm/react"
@@ -20,6 +21,7 @@ import { LicensePlateInput } from "../../components/LicensePlateInput"
 import { TextAreaInput } from "../../components/TextAreaInput"
 import { LocationInfo } from "../../components/LocationInfo"
 import { Loading } from "../../components/Loading"
+import { Map } from "../../components/Map"
 
 import { Container, Content, Message } from "./styles"
 
@@ -32,6 +34,8 @@ export function Departure() {
   const [isLoading, setIsLoading] = useState(false)
   const [isLoadingLocation, setIsLoadingLocation] = useState(true)
   const [currentAddress, setCurrentAddress] = useState<string | null>(null)
+  const [currentCoords, setCurrentCoords] =
+    useState<LocationObjectCoords | null>(null)
 
   const [locationForegroundPermission, requestLocationForegroundPermission] =
     useForegroundPermissions()
@@ -106,6 +110,7 @@ export function Departure() {
           timeInterval: 1000,
         },
         (location) => {
+          setCurrentCoords(location.coords)
           getAddressLocation(location.coords)
             .then((address) => {
               if (address) {
@@ -144,6 +149,7 @@ export function Departure() {
       <Header title="Saída" />
       <KeyboardAwareScrollView extraHeight={100}>
         <ScrollView>
+          {currentCoords && <Map coordinates={[currentCoords]} />}
           <Content>
             {currentAddress && (
               <LocationInfo
