@@ -1,6 +1,3 @@
-Aqui está um modelo para o **README.md** do seu repositório:  
-
----
 
 # Ignite Fleet 🚀  
 
@@ -38,7 +35,3 @@ Aplicação mobile desenvolvida durante meus estudos na **Rocketseat**, focada n
    expo prebuild
    expo run:android or expo run:ios
    ```  
-
----
-
-Se quiser adicionar mais alguma informação, me avise! 😊
