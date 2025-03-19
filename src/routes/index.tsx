@@ -15,7 +15,7 @@ export function Routes() {
         config={{
           info: ({ text1 }) => <TopMessage title={String(text1)} />,
         }}
-        // topOffset={insets.top}
+        topOffset={insets.top}
       />
     </NavigationContainer>
   )

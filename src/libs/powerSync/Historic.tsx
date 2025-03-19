@@ -10,9 +10,22 @@ export const HistoricSchema = new Table({
   updated_at: column.text,
 })
 
+export const CoordsSchema = new Table(
+  {
+    id: column.text,
+    historic_id: column.text,
+    latitude: column.real,
+    longitude: column.real,
+    timestamp: column.text,
+  },
+  { indexes: { HistoricSchema: ["historic_id"] } }
+)
+
 export const AppSchema = new Schema({
   Historic: HistoricSchema,
+  Coords: CoordsSchema,
 })
 
 export type Database = (typeof AppSchema)["types"]
 export type Historic = Database["Historic"]
+export type Coords = Database["Coords"]

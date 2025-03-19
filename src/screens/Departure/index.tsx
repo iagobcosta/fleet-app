@@ -9,11 +9,13 @@ import {
   LocationAccuracy,
   LocationSubscription,
   LocationObjectCoords,
+  requestBackgroundPermissionsAsync,
 } from "expo-location"
 
 import { useUser } from "@realm/react"
 import { licensePlateValidate } from "../../utils/licensePlateValidate"
 import { getAddressLocation } from "../../utils/getAddressLocation"
+import { openSettings } from "../../utils/openSettings"
 
 import { Button } from "../../components/Button"
 import { Header } from "../../components/Header"
@@ -23,10 +25,11 @@ import { LocationInfo } from "../../components/LocationInfo"
 import { Loading } from "../../components/Loading"
 import { Map } from "../../components/Map"
 
-import { Container, Content, Message } from "./styles"
+import { Container, Content, Message, MessageContent } from "./styles"
 
 import { usePowerSync } from "@powersync/react-native"
 import { ObjectId } from "bson"
+import { startLocationTask } from "../../tasks/backgroundLocationTask"
 
 export function Departure() {
   const [description, setDescription] = useState("")
@@ -64,10 +67,29 @@ export function Departure() {
           "A descrição é obrigatória. Por favor, verifique e tente novamente."
         )
       }
+
+      if (!currentCoords?.latitude && !currentCoords?.longitude) {
+        return Alert.alert(
+          "Localização inválida",
+          "Não foi possível obter a localização do veículo. Por favor, verifique e tente novamente."
+        )
+      }
+
       setIsLoading(true)
 
-      await db.execute(
-        "INSERT INTO Historic (id, user_id, license_plate, description, status, created_at, updated_at) VALUES (?, ?, ?, ?, ?, ?, ?)",
+      const backgroundPermission = await requestBackgroundPermissionsAsync()
+
+      if (!backgroundPermission.granted) {
+        setIsLoading(false)
+        return Alert.alert(
+          "Permissão de localização",
+          "É necessário permitir o acesso à localização para registrar a saída do veículo.",
+          [{ text: "Abrir configurações", onPress: openSettings }]
+        )
+      }
+
+      const { rows } = await db.execute(
+        "INSERT INTO Historic (id, user_id, license_plate, description, status, created_at, updated_at) VALUES (?, ?, ?, ?, ?, ?, ?) RETURNING *",
         [
           new ObjectId().toHexString(),
           user!.id,
@@ -79,10 +101,22 @@ export function Departure() {
         ]
       )
 
+      await db.execute(
+        "INSERT INTO Coords (id, historic_id, latitude, longitude, timestamp) VALUES (?, ?, ?, ?, ?)",
+        [
+          new ObjectId().toHexString(),
+          rows?._array[0].id,
+          currentCoords.latitude,
+          currentCoords.longitude,
+          new Date().getTime(),
+        ]
+      )
+
       Alert.alert(
         "Saída registrada",
         "A saída do veículo foi registrada com sucesso."
       )
+      await startLocationTask()
 
       setIsLoading(false)
       goBack()
@@ -131,11 +165,16 @@ export function Departure() {
     return (
       <Container>
         <Header title="Saída" />
-        <Message>
-          Você precisa permitir o acesso à localização para utilizar essa
-          funcionalidade e registrar a saída. Por favor, acesse as configurações
-          do seu dispositivo para permitir o acesso à localização.
-        </Message>
+        <MessageContent>
+          <Message>
+            Você precisa permitir o acesso à localização para utilizar essa
+            funcionalidade e registrar a saída. Por favor, acesse as
+            configurações do seu dispositivo para permitir o acesso à
+            localização.
+          </Message>
+
+          <Button title="Abrir configurações" onPress={openSettings} />
+        </MessageContent>
       </Container>
     )
   }

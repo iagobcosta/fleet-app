@@ -32,6 +32,7 @@ module.exports = {
             ],
           },
         ],
+        UIBackgroundModes: ["location"],
       },
     },
     android: {
@@ -39,6 +40,11 @@ module.exports = {
         foregroundImage: "./assets/adaptive-icon.png",
         backgroundColor: "#202024",
       },
+      permissions: [
+        "ACCESS_COARSE_LOCATION",
+        "ACCESS_FINE_LOCATION",
+        "ACCESS_BACKGROUND_LOCATION",
+      ],
       package: "br.com.darcaltech.fleetapp",
       config: {
         googleMaps: {
@@ -56,6 +62,8 @@ module.exports = {
         {
           locationAlwaysAndWhenInUsePermission:
             "Allow $(PRODUCT_NAME) to use your location.",
+          isAndroidBackgroundLocationEnabled: true,
+          isAndroidForegroundServiceEnabled: true,
         },
       ],
     ],
